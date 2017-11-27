@@ -77,6 +77,7 @@ public class UserContext {
 		List<User> list = new ArrayList<User>();
 		try {
 			conn = DatabaseContext.getConnection();
+			//String query get all user with email
 			String query = "SELECT * FROM [dbo].[User] WHERE email=?";
 			try (PreparedStatement ps = conn.prepareStatement(query)) {
 				ps.setString(1, email);
