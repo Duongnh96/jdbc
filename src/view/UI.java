@@ -9,6 +9,7 @@ import bus.UserBus;
 
 public class UI {
 	private static Scanner scanner;
+	static String EMAIL_REGEX = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
 
 	static void menu() {
 		System.out.println(Const.MENU);
@@ -23,7 +24,13 @@ public class UI {
 				User user = new User();
 				System.out.println("User " + (i + 1));
 				System.out.println("Email: ");
-				user.setEmail(sc.next());
+				String email = sc.next();
+				if (email.matches(EMAIL_REGEX)) {
+					user.setEmail(email);
+				} else {
+					System.out.println("Wrong type Email!");
+					break;
+				}
 				System.out.println("First Name: ");
 				user.setFirstName(sc.next());
 				System.out.println("Last Name: ");
@@ -41,11 +48,15 @@ public class UI {
 
 	static void getListUser() {
 		List<User> list = UserBus.getList();
-		for (User user : list) {
-			System.out.println("------------------------------------------");
-			System.out.println("Email: " + user.getEmail());
-			System.out.println("First Name: " + user.getFirstName());
-			System.out.println("Last Name: " + user.getLastName());
+		if (list.size() > 0) {
+			for (User user : list) {
+				System.out.println("------------------------------------------");
+				System.out.println("Email: " + user.getEmail());
+				System.out.println("First Name: " + user.getFirstName());
+				System.out.println("Last Name: " + user.getLastName());
+			}
+		} else {
+			System.out.println("Database empty !");
 		}
 	}
 
@@ -54,12 +65,20 @@ public class UI {
 			Scanner sc = new Scanner(System.in);
 			System.out.println("Email of User: ");
 			String email = sc.next();
-			List<User> list = UserBus.getListByEmail(email);
-			for (User user : list) {
-				System.out.println("------------------------------------------");
-				System.out.println("Email: " + user.getEmail());
-				System.out.println("First Name: " + user.getFirstName());
-				System.out.println("Last Name: " + user.getLastName());
+			if (email.matches(EMAIL_REGEX)) {
+				List<User> list = UserBus.getListByEmail(email);
+				if (list.size() > 0) {
+					for (User user : list) {
+						System.out.println("------------------------------------------");
+						System.out.println("Email: " + user.getEmail());
+						System.out.println("First Name: " + user.getFirstName());
+						System.out.println("Last Name: " + user.getLastName());
+					}
+				} else {
+					System.out.println("Email not found !");
+				}
+			} else {
+				System.out.println("Wrong type Email or Database empty!");
 			}
 		} catch (Exception e) {
 
@@ -70,13 +89,18 @@ public class UI {
 		try {
 			Scanner sc = new Scanner(System.in);
 			System.out.println("Email of User: ");
+
 			String email = sc.next();
-			if (UserBus.delete(email)) {
-				System.out.println("Delete User Sucess!");
+			if (email.matches(EMAIL_REGEX)) {
+				if (UserBus.delete(email)) {
+					System.out.println("Delete User Sucess!");
+				} else {
+					System.out.println("Delete User Fail!");
+				}
+				;
 			} else {
-				System.out.println("Delete User Fail!");
+				System.out.println("Wrong type Email!");
 			}
-			;
 
 		} catch (Exception e) {
 
@@ -88,19 +112,29 @@ public class UI {
 			Scanner sc = new Scanner(System.in);
 			System.out.println("Email of User update: ");
 			String email = sc.next();
-			User user = new User();
-			System.out.println("New Email: ");
-			user.setEmail(sc.next());
-			System.out.println("New First Name: ");
-			user.setFirstName(sc.next());
-			System.out.println("New Last Name: ");
-			user.setLastName(sc.next());
-			if (UserBus.update(user, email)) {
-				System.out.println("Update User Success !");
+			if (email.matches(EMAIL_REGEX)) {
+				User user = new User();
+				System.out.println("New Email: ");
+				String newemail = sc.next();
+				if (newemail.matches(EMAIL_REGEX)) {
+					user.setEmail(newemail);
+				} else {
+					System.out.println("Wrong type new email !");
+					return;
+				}
+				System.out.println("New First Name: ");
+				user.setFirstName(sc.next());
+				System.out.println("New Last Name: ");
+				user.setLastName(sc.next());
+				if (UserBus.update(user, email)) {
+					System.out.println("Update User Success !");
+				} else {
+					System.out.println("Update User Fail !");
+				}
+				;
 			} else {
-				System.out.println("Update User Fail !");
+				System.out.println("Wrong Email Type !");
 			}
-			;
 		} catch (Exception e) {
 		}
 	}
