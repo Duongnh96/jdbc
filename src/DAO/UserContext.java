@@ -9,8 +9,15 @@ import java.util.List;
 
 import models.User;
 
+/**
+ * @author User Create time Nov 27, 2017+2:51:41 PM
+ */
 public class UserContext {
 
+	/**
+	 * @param user
+	 * @return
+	 */
 	public static boolean insertUser(User user) {
 		Connection conn = null;
 		try {
@@ -35,6 +42,10 @@ public class UserContext {
 		}
 	}
 
+	/**
+	 * @param email
+	 * @return
+	 */
 	public static boolean deleteUser(String email) {
 		Connection conn = null;
 		try {
@@ -57,6 +68,10 @@ public class UserContext {
 		}
 	}
 
+	/**
+	 * @param email
+	 * @return
+	 */
 	public static List<User> getUserByEmail(String email) {
 		Connection conn = null;
 		List<User> list = new ArrayList<User>();
@@ -87,6 +102,11 @@ public class UserContext {
 		return list;
 	}
 
+	/**
+	 * @param user
+	 * @param email
+	 * @return
+	 */
 	public static boolean updateUser(User user, String email) {
 		Connection conn = null;
 		try {
@@ -112,6 +132,10 @@ public class UserContext {
 		}
 	}
 
+	/**
+	 * @param query
+	 * @return
+	 */
 	public static List<User> getUsers(String query) {
 		List<User> userList = new ArrayList<User>();
 		Connection conn = null;

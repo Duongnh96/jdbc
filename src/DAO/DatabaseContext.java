@@ -5,6 +5,10 @@ import java.sql.DriverManager;
 
 public class DatabaseContext {
 
+	/**
+	 * @return
+	 * @throws Exception
+	 */
 	public static Connection getConnection() throws Exception {
 		Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 		return DriverManager.getConnection(
