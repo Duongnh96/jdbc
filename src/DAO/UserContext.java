@@ -1,5 +1,6 @@
 package DAO;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,6 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import util.Const;
 import models.User;
 
 /**
@@ -14,7 +16,7 @@ import models.User;
  */
 public class UserContext {
 
-	/**
+	/**	Insert new user
 	 * @param user
 	 * @return
 	 */
@@ -22,7 +24,9 @@ public class UserContext {
 		Connection conn = null;
 		try {
 			conn = DatabaseContext.getConnection();
-			String query = "INSERT INTO [dbo].[User]([email],[first_name],[last_name]) VALUES (?,?,?)";
+			String query = "INSERT INTO " + Const.DB_NAME + "(" + Const.FIRST_COLUMN
+					+ "," + Const.SECOND_COLUMN + "," + Const.THIRD_COLUMN
+					+ ") VALUES (?,?,?)";
 			try (PreparedStatement ps = conn.prepareStatement(query)) {
 				ps.setString(1, user.getEmail());
 				ps.setString(2, user.getFirstName());
@@ -33,16 +37,18 @@ public class UserContext {
 			ex.printStackTrace();
 			return false;
 		} finally {
-			if (conn != null)
+			if (conn != null){
 				try {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+				}}else {
+					System.out.println("Database empty !");
 				}
 		}
 	}
 
-	/**
+	/** Delete user by email
 	 * @param email
 	 * @return
 	 */
@@ -50,7 +56,7 @@ public class UserContext {
 		Connection conn = null;
 		try {
 			conn = DatabaseContext.getConnection();
-			String query = "DELETE FROM [dbo].[User] WHERE email=?";
+			String query = "DELETE FROM " + Const.DB_NAME + " WHERE email=?";
 			try (PreparedStatement ps = conn.prepareStatement(query)) {
 				ps.setString(1, email);
 				return ps.executeUpdate() > 0;
@@ -68,17 +74,17 @@ public class UserContext {
 		}
 	}
 
-	/**
+	/**Get list user by email
 	 * @param email
-	 * @return
+	 * @return List user by email
 	 */
 	public static List<User> getUserByEmail(String email) {
 		Connection conn = null;
 		List<User> list = new ArrayList<User>();
 		try {
 			conn = DatabaseContext.getConnection();
-			//String query get all user with email
-			String query = "SELECT * FROM [dbo].[User] WHERE email=?";
+			// String query get all user with email
+			String query = "SELECT * FROM " + Const.DB_NAME + " WHERE email=?";
 			try (PreparedStatement ps = conn.prepareStatement(query)) {
 				ps.setString(1, email);
 				ResultSet resultSet = ps.executeQuery();
@@ -104,15 +110,49 @@ public class UserContext {
 	}
 
 	/**
+	 * @return List user with Proc
+	 */
+	public static List<User> getUserProc() {
+		Connection conn = null;
+		List<User> list = new ArrayList<User>();
+		try {
+			conn = DatabaseContext.getConnection();
+			String query = "{call getall}";
+			try (CallableStatement cs = conn.prepareCall(query)) {
+				ResultSet resultSet = cs.executeQuery();
+				while (resultSet.next()) {
+					User user = new User();
+					user.setEmail(resultSet.getString(1));
+					user.setFirstName(resultSet.getString(2));
+					user.setLastName(resultSet.getString(3));
+					list.add(user);
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			if (conn != null)
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+		}
+		return list;
+	}
+
+	/**Update user by email
 	 * @param user
 	 * @param email
-	 * @return
+	 * @return boolean
 	 */
 	public static boolean updateUser(User user, String email) {
 		Connection conn = null;
 		try {
 			conn = DatabaseContext.getConnection();
-			String query = "	UPDATE [dbo].[User] SET [email]=?,[first_name]=?,[last_name]=? WHERE [email]=?";
+			String query = "	UPDATE " + Const.DB_NAME + " SET " + Const.FIRST_COLUMN
+					+ "=?," + Const.SECOND_COLUMN + "=?," + Const.THIRD_COLUMN
+					+ "=? WHERE [email]=?";
 			try (PreparedStatement ps = conn.prepareStatement(query)) {
 				ps.setString(1, user.getEmail());
 				ps.setString(2, user.getFirstName());
@@ -133,9 +173,9 @@ public class UserContext {
 		}
 	}
 
-	/**
+	/**Get list user 
 	 * @param query
-	 * @return
+	 * @return List user 
 	 */
 	public static List<User> getUsers(String query) {
 		List<User> userList = new ArrayList<User>();

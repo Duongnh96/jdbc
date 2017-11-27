@@ -3,6 +3,7 @@ package bus;
 import java.util.ArrayList;
 import java.util.List;
 
+import util.Const;
 import models.User;
 import DAO.UserContext;
 
@@ -15,7 +16,7 @@ public class UserBus {
 		List<User> list = new ArrayList<User>();
 		UserContext context = new UserContext();
 		try {
-			list = context.getUsers("Select * from [User]");
+			list = context.getUsers("Select * from "+Const.DB_NAME);
 		} catch (Exception e) {
 
 		}
@@ -35,7 +36,19 @@ public class UserBus {
 		} catch (Exception e) {
 		}
 		return list;
+	}
 
+	/**
+	 * @return
+	 */
+	public static List<User> getUserProc() {
+		List<User> list = new ArrayList<User>();
+		UserContext context = new UserContext();
+		try {
+			list = context.getUserProc();
+		} catch (Exception e) {
+		}
+		return list;
 	}
 
 	/**

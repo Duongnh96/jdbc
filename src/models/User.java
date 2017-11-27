@@ -4,10 +4,13 @@ public class User {
 
 	private String email;
 
+	/**
+	 * Contructor
+	 */
 	public User() {
 	}
 
-	/**
+	/**Contructor with parameter
 	 * @param email
 	 * @param firstname
 	 * @param lastname
